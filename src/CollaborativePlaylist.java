@@ -3,18 +3,18 @@ import Login.LoginScreen;
 import javax.swing.*;
 import java.awt.*;
 
-public class InteractivePlaylist extends JFrame {
+public class CollaborativePlaylist extends JFrame {
 
     private static final int WIDTH = 650;
     private static final int HEIGHT = 700;
 
-    public InteractivePlaylist() {
-        super("Interactive Playlist");
+    public CollaborativePlaylist() {
+        super("Collaborative Playlist");
         setSize(WIDTH, HEIGHT);
 
         LoginScreen loginScreen = new LoginScreen();
 
-        ((Component) loginScreen).setFocusable(true);
+        loginScreen.setFocusable(true);
 
         Color white = new Color(255, 255, 255);
         Color black = new Color(0,0,0);
@@ -32,6 +32,6 @@ public class InteractivePlaylist extends JFrame {
     }
 
     public static void main(String[] args) {
-        InteractivePlaylist run = new InteractivePlaylist();
+        CollaborativePlaylist run = new CollaborativePlaylist();
     }
 }
