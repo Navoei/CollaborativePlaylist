@@ -30,7 +30,7 @@ public class LoginScreen extends JPanel implements Runnable {
         }
         Graphics g2d = back.createGraphics();
         g2d.setColor(new Color(0,0,0));
-        g2d.fillOval(0,0,10,10);
+        g2d.fillOval(100,100,50,50);
 
         twoDgraph.drawImage(back, null, 0, 0);
     }
