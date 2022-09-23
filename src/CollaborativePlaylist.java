@@ -17,6 +17,8 @@ public class CollaborativePlaylist extends JFrame {
 
         loginScreen.setFocusable(true);
 
+        setResizable(false);
+
         Color backgroundColor = new Color(255, 255, 255);
 
         setBackground(backgroundColor);
@@ -27,8 +29,9 @@ public class CollaborativePlaylist extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Image icon = Toolkit.getDefaultToolkit().getImage("interactiveplaylisticon.png");
+        //Image icon = Toolkit.getDefaultToolkit().getImage("collaborativeplaylisticon.png");
         //setIconImage(icon);
+
     }
 
     public static void main(String[] args) {
