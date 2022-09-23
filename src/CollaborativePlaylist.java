@@ -1,4 +1,4 @@
-import Login.LoginScreen;
+import Screen.LoginScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,16 +10,16 @@ public class CollaborativePlaylist extends JFrame {
 
     public CollaborativePlaylist() {
         super("Collaborative Playlist");
+
         setSize(WIDTH, HEIGHT);
 
         LoginScreen loginScreen = new LoginScreen();
 
         loginScreen.setFocusable(true);
 
-        Color white = new Color(255, 255, 255);
-        Color black = new Color(0,0,0);
+        Color backgroundColor = new Color(255, 255, 255);
 
-        setBackground(white);
+        setBackground(backgroundColor);
 
         getContentPane().add(loginScreen);
 

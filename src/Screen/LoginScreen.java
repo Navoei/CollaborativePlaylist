@@ -1,4 +1,6 @@
-package Login;
+package Screen;
+
+import resources.Images;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,9 +9,13 @@ import java.awt.image.BufferedImage;
 public class LoginScreen extends JPanel implements Runnable {
 
     private BufferedImage back;
+    private ImageIcon logo;
 
     public LoginScreen() {
+        logo = new ImageIcon();
         new Thread(this).start();
+        Images images = new Images();
+        logo = images.loadImage("logo.png");
     }
 
     public void run() {
@@ -29,8 +35,9 @@ public class LoginScreen extends JPanel implements Runnable {
             back = (BufferedImage) ((createImage(getWidth(), getHeight())));
         }
         Graphics g2d = back.createGraphics();
-        g2d.setColor(new Color(0,0,0));
-        g2d.fillOval(100,100,50,50);
+        g2d.clearRect(0,0,getSize().width, getSize().height);
+
+        g2d.drawImage(logo.getImage(), (getWidth()/2)-(logo.getIconWidth()/4), 10, logo.getIconWidth()/2, logo.getIconHeight()/2, this);
 
         twoDgraph.drawImage(back, null, 0, 0);
     }
