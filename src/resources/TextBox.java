@@ -1,5 +1,8 @@
 package resources;
 
-public class TextBox {
+import javax.swing.*;
+
+public class TextBox extends JPanel {
+
 
 }

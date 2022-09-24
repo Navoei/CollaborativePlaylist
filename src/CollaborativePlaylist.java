@@ -1,4 +1,4 @@
-import Screen.LoginScreen;
+import Screen.UserInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ public class CollaborativePlaylist extends JFrame {
 
         setSize(WIDTH, HEIGHT);
 
-        LoginScreen loginScreen = new LoginScreen();
+        UserInterface loginScreen = new UserInterface();
 
         loginScreen.setFocusable(true);
 
