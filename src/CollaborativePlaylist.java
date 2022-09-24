@@ -1,4 +1,4 @@
-import Screen.UserInterface;
+import Window.UserInterface;
 
 import javax.swing.*;
 import java.awt.*;

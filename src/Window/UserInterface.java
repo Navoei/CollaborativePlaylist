@@ -1,4 +1,4 @@
-package Screen;
+package Window;
 
 import resources.Images;
 import resources.Button;
@@ -100,7 +100,14 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     }
 
     public void loginToGoogleAccount() {
-
+        //if (usernamepasswordvalid) {
+        //    login to account to setup google drive stuff
+        //    pop up window with a prompt to login
+        //    save a file into the executable with users's information so they do not have to login everytime and
+        //    their drive folders are saved unless they log out
+        //} else {
+        //    username password incorrect stay in login screen
+        //}
     }
 
     @Override
