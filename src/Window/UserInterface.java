@@ -21,8 +21,9 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private Button button;
     private int mouseX, mouseY;
     private boolean loginScreen;
-    private JTextField usernameJTextField;
-    private JPasswordField passwordJTextField;
+
+    //private JTextField usernameJTextField;
+    //private JPasswordField passwordJTextField;
 
     public UserInterface() {
         new Thread(this).start();
@@ -36,13 +37,13 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         logo = images.loadImage("logo.png");
 
-        usernameJTextField = new JTextField();
+        /*usernameJTextField = new JTextField();
         usernameJTextField.setColumns(16);
         add(usernameJTextField);
 
         passwordJTextField = new JPasswordField();
         passwordJTextField.setColumns(16);
-        add(passwordJTextField);
+        add(passwordJTextField);*/
 
     }
 
@@ -72,14 +73,14 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         String loginText = "Sign in with Google:";
 
-        usernameJTextField.setBounds(182, 223, 270,37);
-        passwordJTextField.setBounds(182, 323, 270,37);
+        //usernameJTextField.setBounds(182, 223, 270,37);
+        //passwordJTextField.setBounds(182, 323, 270,37);
 
         g2d.drawString(loginText, (getWidth()/2)-((loginText.length()*((textFont.getSize())/5)+6)), getHeight()/4);
 
         g2d.drawImage(logo.getImage(), (getWidth()/2)-(logo.getIconWidth()/4), 10, logo.getIconWidth()/2, logo.getIconHeight()/2, this);
 
-        button.drawButton(g2d, new Color(0, 71, 255), 243, 420, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 448, mouseX, mouseY);
+        button.drawButton(g2d, new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348, mouseX, mouseY);
 
         twoDgraph.drawImage(back, null, 0, 0);
     }
@@ -99,7 +100,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     }
 
-    public void loginToGoogleAccount() {
+    public void openBrowser() {
         //if (usernamepasswordvalid) {
         //    login to account to setup google drive stuff
         //    pop up window with a prompt to login
