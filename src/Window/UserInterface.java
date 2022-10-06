@@ -53,7 +53,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private Font textFont = new Font("Berlin Sans FB", Font.PLAIN, 36);
 
     private static final String APPLICATION_NAME = "InteractivePlaylist";
-    private static final String TOKENS_DIRECTORY_PATH = resources.getFileResource("credentials.json").getPath().replace("credentials.json", "tokens");
+    private static final String TOKENS_DIRECTORY_PATH = resources.getFileResource("credentials.json").getPath().replace("credentials.json", "user");
     private static final String CREDENTIALS_FILE_PATH = resources.getFileResource("credentials.json").getFile().replaceFirst("/", "");
 
     private static final List<String> SCOPES =
