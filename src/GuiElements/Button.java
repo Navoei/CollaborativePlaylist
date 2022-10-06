@@ -1,4 +1,4 @@
-package resources;
+package GuiElements;
 
 import javax.swing.*;
 import java.awt.*;

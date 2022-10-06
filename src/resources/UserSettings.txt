@@ -1,0 +1,3 @@
+darkmode = false
+approvedplaylistfolder = 0
+unapprovedplaylistfolder = 0
