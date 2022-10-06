@@ -203,8 +203,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // Print the names and IDs for up to 10 files.
+        // Print the names and IDs for up to 10 folders.
+        //https://developers.google.com/drive/api/guides/search-files
         FileList result = service.files().list()
+                .setQ("mimeType = 'application/vnd.google-apps.folder'")
                 .setPageSize(10)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
@@ -212,7 +214,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (files == null || files.isEmpty()) {
             System.out.println("No files found.");
         } else {
-            System.out.println("Files:");
+            System.out.println("Folders:");
             for (File file : files) {
                 System.out.printf("%s (%s)\n", file.getName(), file.getId());
             }
