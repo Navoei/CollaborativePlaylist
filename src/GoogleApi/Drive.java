@@ -27,6 +27,7 @@ public class Drive {
 
         // Print the names and IDs for up to 10 files.
         FileList result = service.files().list()
+                .setQ("mimeType = 'application/vnd.google-apps.folder'")
                 .setPageSize(10)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
