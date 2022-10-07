@@ -14,12 +14,10 @@ public class Drive {
 
     private final Authentication authentication = new Authentication();
 
-    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-
     public Drive() throws GeneralSecurityException, IOException {
     }
 
-    public void listFolders(Credential userCredentials) throws IOException {
+    public List<File> listFolders(Credential userCredentials) throws IOException {
         // Build a new authorized API client service.
         com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
                 .setApplicationName(authentication.getApplicationName())
@@ -34,11 +32,14 @@ public class Drive {
         List<File> files = result.getFiles();
         if (files == null || files.isEmpty()) {
             System.out.println("No files found.");
+            return null;
         } else {
             System.out.println("Folders:");
             for (File file : files) {
                 System.out.printf("%s (%s)\n", file.getName(), file.getId());
             }
+            files.addAll(result.getFiles());
         }
+        return files;
     }
 }

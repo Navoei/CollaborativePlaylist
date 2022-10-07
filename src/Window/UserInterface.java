@@ -39,9 +39,11 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private int mouseX, mouseY;
 
-    private boolean loginScreen, playerScreen, drawConnectionError, browserOpen, displaySettingsDropDown;
+    private boolean loginScreen, playerScreen, folderSelectionScreen, drawConnectionError, browserOpen, displaySettingsDropDown;
 
     private Font textFont = new Font("Berlin Sans FB", Font.PLAIN, 36);
+
+    private java.util.List<com.google.api.services.drive.model.File> googleDriveFolders;
 
     //private JTextField usernameJTextField;
     //private JPasswordField passwordJTextField;
@@ -129,7 +131,16 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 24));
                 g2d.drawString("Waiting for authentication...", 176,400);
             }
-        } else if (!loginScreen && playerScreen) {
+        } else if (playerScreen) {
+            g2d.setColor(Color.BLUE);
+            g2d.drawString("PlayerScreen",100,100);
+        } else if (folderSelectionScreen) {
+            g2d.setColor(Color.BLUE);
+            g2d.drawString("FolderSelection",100,100);
+            g2d.drawString(googleDriveFolders.toString(),100,200);
+        }
+
+        if (!loginScreen) {
             try {
                 drawSettingsDropDown(g2d, new Color(0, 71, 255));
             } catch (FileNotFoundException e) {
@@ -176,20 +187,15 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (browserOpen) {
 
             authentication.logon();
+            googleDriveFolders = googleDrive.listFolders(authentication.logon());
 
             //If authentication successful get rid of login screen
             loginScreen = false;
             browserOpen = false;
             playerScreen = true;
 
-            printFilesInDrive();
-
         }
 
-    }
-
-    private void printFilesInDrive() throws IOException {
-        googleDrive.listFolders(authentication.logon());
     }
 
     private void googleSignOut() {
@@ -227,24 +233,34 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         }
 
-        //Settings button when closed menu. When open close only when clicking button or area outside menu.
+        //Open when settings button is pressed. When open close only when clicking button or area outside menu.
         if (!loginScreen && !displaySettingsDropDown && (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35))) ) {
             displaySettingsDropDown = true;
-
         } else if ( (((e.getX() < 425) || (e.getX() > 625)) || ((e.getY() < 5) || (e.getY() > 305)))
                     || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
         ) {
             displaySettingsDropDown = false;
         }
-        //435,30,150,25
-        if (!loginScreen && displaySettingsDropDown && (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
-            try {
-                setTheme();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+
+
+        if (!loginScreen && displaySettingsDropDown) {
+            //Theme button
+            if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
+                try {
+                    setTheme();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                //Folder Selection Button
+            } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 65) && (e.getY() < 90))) ){
+                playerScreen = true;
+                folderSelectionScreen = false;
+            } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 95) && (e.getY() < 120))) ) {
+                playerScreen = false;
+                folderSelectionScreen = true;
             }
         }
-        //g2d.fillRect(425,5,200,300);
+
     }
 
     @Override

@@ -26,6 +26,8 @@ public class SettingsDropDown {
         g2d.setColor(new Color(255,255,255));
         g2d.drawString("Settings" , 445, 25);
         button.drawButton(g2d,  new Color(113, 149, 255), 435, 35, 150, 25, buttonFont, new Color(255,255,255), "Theme: " + settings.getSettingValue("theme"), 20, 445, 53, mouseX, mouseY);
+        button.drawButton(g2d,  new Color(113, 149, 255), 435, 65, 150, 25, buttonFont, new Color(255,255,255), "Music Player", 20, 445, 83, mouseX, mouseY);
+        button.drawButton(g2d,  new Color(113, 149, 255), 435, 95, 150, 25, buttonFont, new Color(255,255,255), "Folder Selection", 20, 445, 113, mouseX, mouseY);
     }
 
 }
