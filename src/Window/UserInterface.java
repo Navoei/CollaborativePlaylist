@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 public class UserInterface extends JPanel implements Runnable, MouseListener, MouseMotionListener {
 
     private BufferedImage back;
+    private Color backgroundColor;
     private ImageIcon logo, settingsIcon;
     private Button button;
     private SettingsDropDown settingsDropDown;
@@ -62,6 +63,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         settings = new Settings();
         settingsDropDown = new SettingsDropDown();
 
+        setThemeOnStartup();
+
         logo = images.loadImage("logo.png");
         settingsIcon = images.loadImage("gear.png");
 
@@ -75,14 +78,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     }
 
-    public void setTheme(String theme) {
-        if (theme=="light") {
-
-        } else if (theme=="dark") {
-
-        }
-    }
-
     public void run() {
         try {
             while(true) {
@@ -94,6 +89,14 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
+    private void setThemeOnStartup() throws FileNotFoundException {
+        if (settings.getSettingValue("theme").equals("light")) {
+            backgroundColor = new Color(255, 255, 255);
+        } else if (settings.getSettingValue("theme").equals("dark")) {
+            backgroundColor = new Color(0, 0, 0);
+        }
+    }
+
     //public void paint(Graphics g) {
     public void paintComponent(Graphics g) {
         Graphics2D twoDgraph = (Graphics2D) g;
@@ -101,7 +104,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             back = (BufferedImage) ((createImage(getWidth(), getHeight())));
         }
         Graphics g2d = back.createGraphics();
-        g2d.clearRect(0,0,getSize().width, getSize().height);
+        g2d.setColor(backgroundColor);
+        g2d.fillRect(0,0,getSize().width, getSize().height);
 
         if (loginScreen) {
             g2d.setColor(new Color(0, 71, 255));
@@ -193,8 +197,20 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         loginScreen = true;
     }
 
+    private void setTheme() throws IOException {
+        if (settings.getSettingValue("theme").equals("light")) {
+            settings.setSetting("theme", "dark");
+            backgroundColor = new Color(0,0,0);
+        } else if (settings.getSettingValue("theme").equals("dark")) {
+            settings.setSetting("theme", "light");
+            backgroundColor = new Color(255,255,255);
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
+
+        if (e.getButton()!=1) return;
 
         //Login button
         if ( loginScreen && (((e.getX() > 243) && (e.getX() < 393)) && ((e.getY() > 320) && (e.getY() < 360))) ) {
@@ -214,6 +230,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         //Settings button when closed menu. When open close only when clicking button or area outside menu.
         if (!loginScreen && !displaySettingsDropDown && (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35))) ) {
             displaySettingsDropDown = true;
+
         } else if ( (((e.getX() < 425) || (e.getX() > 625)) || ((e.getY() < 5) || (e.getY() > 305)))
                     || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
         ) {
@@ -222,12 +239,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         //435,30,150,25
         if (!loginScreen && displaySettingsDropDown && (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
             try {
-                if (settings.getSettings("theme").equals("light")) {
-
-                } else if (settings.getSettings("theme").equals("dark")) {
-
-                }
-            } catch (FileNotFoundException ex) {
+                setTheme();
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         }

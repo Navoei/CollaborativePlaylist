@@ -1,17 +1,22 @@
 import Window.UserInterface;
 import resources.GetResources;
+import resources.Settings;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-public class CollaborativePlaylist extends JFrame {
+public class InteractivePlaylist extends JFrame {
 
     private static final int WIDTH = 650;
     private static final int HEIGHT = 700;
 
-    public CollaborativePlaylist() throws GeneralSecurityException, IOException {
+    public Color backgroundColor;
+
+    private Settings settings = new Settings();
+
+    public InteractivePlaylist() throws GeneralSecurityException, IOException {
         super("Collaborative Playlist");
 
         setSize(WIDTH, HEIGHT);
@@ -23,8 +28,15 @@ public class CollaborativePlaylist extends JFrame {
 
         setResizable(false);
 
-        Color backgroundColor = new Color(255, 255, 255);
-
+        try {
+            if (settings.getSettingValue("theme").equals("light")) {
+                backgroundColor = new Color(255, 255, 255);
+            } else if (settings.getSettingValue("theme").equals("dark")) {
+                backgroundColor = new Color(0, 0, 0);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setBackground(backgroundColor);
 
         getContentPane().add(loginScreen);
@@ -39,6 +51,6 @@ public class CollaborativePlaylist extends JFrame {
     }
 
     public static void main(String[] args) throws GeneralSecurityException, IOException {
-        CollaborativePlaylist run = new CollaborativePlaylist();
+        InteractivePlaylist run = new InteractivePlaylist();
     }
 }
