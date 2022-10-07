@@ -137,7 +137,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         } else if (folderSelectionScreen) {
             g2d.setColor(Color.BLUE);
             g2d.drawString("FolderSelection",100,100);
-            g2d.drawString(googleDriveFolders.toString(),100,200);
+            g2d.drawString(googleDriveFolders.toString(),0,200);
         }
 
         if (!loginScreen) {
@@ -178,7 +178,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (drawConnectionError) {
             g2d.setColor(new Color(255,0,0));
             g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 24));
-            g2d.drawString("No internet connection.", 0,400);
+            g2d.drawString("No internet connection.", 200,400);
         }
     }
 
