@@ -6,6 +6,7 @@ import GuiElements.Images;
 import GuiElements.Button;
 import GuiElements.SettingsDropDown;
 import resources.GetResources;
+import resources.Settings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
-import java.util.Scanner;
 
 public class UserInterface extends JPanel implements Runnable, MouseListener, MouseMotionListener {
 
@@ -28,6 +28,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private ImageIcon logo, settingsIcon;
     private Button button;
     private SettingsDropDown settingsDropDown;
+    private Settings settings;
     private static final GetResources resources = new GetResources();
     private final Authentication authentication = new Authentication();
 
@@ -58,6 +59,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         Images images = new Images();
         button = new Button();
+        settings = new Settings();
         settingsDropDown = new SettingsDropDown();
 
         logo = images.loadImage("logo.png");
@@ -71,13 +73,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         passwordJTextField.setColumns(16);
         add(passwordJTextField);*/
 
-    }
-
-    public String getTheme() throws FileNotFoundException {
-        Scanner scanner = new Scanner(settingsFile);
-        while (scanner.hasNextLine()) {
-            System.out.println(scanner.nextLine());
-        }
     }
 
     public void setTheme(String theme) {
@@ -131,7 +126,11 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 g2d.drawString("Waiting for authentication...", 176,400);
             }
         } else if (!loginScreen && playerScreen) {
-            drawSettingsDropDown(g2d, new Color(0, 71, 255));
+            try {
+                drawSettingsDropDown(g2d, new Color(0, 71, 255));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
             button.drawButton(g2d, new Color(0, 71, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
             g2d.drawImage(settingsIcon.getImage(), 600, 10, 20, 20, this);
         }
@@ -154,7 +153,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     }
 
-    private void drawSettingsDropDown(Graphics g2d, Color color) {
+    private void drawSettingsDropDown(Graphics g2d, Color color) throws FileNotFoundException {
         if (displaySettingsDropDown) {
             settingsDropDown.drawSettingsDropDown(g2d, color, mouseX, mouseY);
         }
@@ -212,12 +211,27 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         }
 
-        //Settings button
+        //Settings button when closed menu. When open close only when clicking button or area outside menu.
         if (!loginScreen && !displaySettingsDropDown && (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35))) ) {
             displaySettingsDropDown = true;
-        } else {
+        } else if ( (((e.getX() < 425) || (e.getX() > 625)) || ((e.getY() < 5) || (e.getY() > 305)))
+                    || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
+        ) {
             displaySettingsDropDown = false;
         }
+        //435,30,150,25
+        if (!loginScreen && displaySettingsDropDown && (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
+            try {
+                if (settings.getSettings("theme").equals("light")) {
+
+                } else if (settings.getSettings("theme").equals("dark")) {
+
+                }
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        //g2d.fillRect(425,5,200,300);
     }
 
     @Override
