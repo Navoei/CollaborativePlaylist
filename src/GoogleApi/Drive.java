@@ -35,7 +35,7 @@ public class Drive {
         if (files == null || files.isEmpty()) {
             System.out.println("No files found.");
         } else {
-            System.out.println("Files:");
+            System.out.println("Folders:");
             for (File file : files) {
                 System.out.printf("%s (%s)\n", file.getName(), file.getId());
             }
