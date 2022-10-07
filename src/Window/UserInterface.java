@@ -178,7 +178,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (drawConnectionError) {
             g2d.setColor(new Color(255,0,0));
             g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 24));
-            g2d.drawString("No internet connection.", 200,400);
+            g2d.drawString("No internet connection.", 0,400);
         }
     }
 
