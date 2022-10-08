@@ -45,8 +45,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private java.util.List<com.google.api.services.drive.model.File> googleDriveFolders;
 
-    //private JTextField usernameJTextField;
-    //private JPasswordField passwordJTextField;
+    private JTextField unapprovedFileSearchJTextField;
+    private JTextField approvedFileSearchJTextField;
 
     public UserInterface() throws GeneralSecurityException, IOException {
 
@@ -70,13 +70,14 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         logo = images.loadImage("logo.png");
         settingsIcon = images.loadImage("gear.png");
 
-        /*usernameJTextField = new JTextField();
-        usernameJTextField.setColumns(16);
-        add(usernameJTextField);
+        unapprovedFileSearchJTextField = new JTextField();
+        unapprovedFileSearchJTextField.setColumns(16);
 
-        passwordJTextField = new JPasswordField();
-        passwordJTextField.setColumns(16);
-        add(passwordJTextField);*/
+        approvedFileSearchJTextField = new JTextField();
+        approvedFileSearchJTextField.setColumns(16);
+
+        unapprovedFileSearchJTextField.setBounds(182, 223, 270,37);
+        approvedFileSearchJTextField.setBounds(182, 323, 270,37);
 
     }
 
@@ -110,13 +111,11 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         g2d.fillRect(0,0,getSize().width, getSize().height);
 
         if (loginScreen) {
+
             g2d.setColor(new Color(0, 71, 255));
             g2d.setFont(textFont);
 
             String loginText = "Sign in with Google:";
-
-            //usernameJTextField.setBounds(182, 223, 270,37);
-            //passwordJTextField.setBounds(182, 323, 270,37);
 
             g2d.drawString(loginText, (getWidth()/2)-((loginText.length()*((textFont.getSize())/5)+6)), getHeight()/4);
 
@@ -187,7 +186,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (browserOpen) {
 
             authentication.logon();
-            googleDriveFolders = googleDrive.listFolders(authentication.logon());
 
             //If authentication successful get rid of login screen
             loginScreen = false;
@@ -244,20 +242,35 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
 
         if (!loginScreen && displaySettingsDropDown) {
-            //Theme button
             if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
+                //Theme Button
                 try {
                     setTheme();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                //Folder Selection Button
             } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 65) && (e.getY() < 90))) ){
+                //Player Button
                 playerScreen = true;
                 folderSelectionScreen = false;
+
+                remove(unapprovedFileSearchJTextField);
+                remove(approvedFileSearchJTextField);
+
             } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 95) && (e.getY() < 120))) ) {
+                //Folder Selection Button
                 playerScreen = false;
                 folderSelectionScreen = true;
+
+                add(unapprovedFileSearchJTextField);
+                add(approvedFileSearchJTextField);
+
+                try {
+                    googleDriveFolders = googleDrive.listFolders(authentication.logon());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
             }
         }
 
