@@ -26,6 +26,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private BufferedImage back;
     private Color backgroundColor;
+
+    private Color customBlue = new Color(0, 71, 255);
     private ImageIcon logo, settingsIcon;
     private Button button;
     private SettingsDropDown settingsDropDown;
@@ -43,7 +45,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private Font textFont = new Font("Berlin Sans FB", Font.PLAIN, 36);
 
-    private java.util.List<com.google.api.services.drive.model.File> googleDriveFolders;
+    private java.util.List<com.google.api.services.drive.model.File> googleDriveFoldersUnapproved;
 
     private JTextField unapprovedFileSearchJTextField;
     private JTextField approvedFileSearchJTextField;
@@ -76,8 +78,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         approvedFileSearchJTextField = new JTextField();
         approvedFileSearchJTextField.setColumns(16);
 
-        unapprovedFileSearchJTextField.setBounds(182, 223, 270,37);
-        approvedFileSearchJTextField.setBounds(182, 323, 270,37);
+        unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
+        approvedFileSearchJTextField.setBounds(294, 200, 236,24);
 
     }
 
@@ -112,7 +114,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         if (loginScreen) {
 
-            g2d.setColor(new Color(0, 71, 255));
+            g2d.setColor(customBlue);
             g2d.setFont(textFont);
 
             String loginText = "Sign in with Google:";
@@ -126,26 +128,35 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             drawFeedbackText(g2d);
 
             if (browserOpen) {
-                g2d.setColor(new Color(0, 187, 0));
+                g2d.setColor(customBlue);
                 g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 24));
                 g2d.drawString("Waiting for authentication...", 176,400);
             }
         } else if (playerScreen) {
-            g2d.setColor(Color.BLUE);
+            g2d.setColor(customBlue);
             g2d.drawString("PlayerScreen",100,100);
         } else if (folderSelectionScreen) {
-            g2d.setColor(Color.BLUE);
-            g2d.drawString("FolderSelection",100,100);
-            g2d.drawString(googleDriveFolders.toString(),0,200);
+            g2d.setColor(customBlue);
+            g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 48));
+            g2d.drawString("Folder Selection",175,100);
+            g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 10));
+
+            button.drawButton(g2d, new Color(0, 71, 255), 246, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
+            button.drawButton(g2d, new Color(0, 71, 255), 600, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
+
+            if (googleDriveFoldersUnapproved != null) {
+                g2d.setColor(Color.BLUE);
+                g2d.drawString(googleDriveFoldersUnapproved.toString(), 100,300);
+            }
         }
 
         if (!loginScreen) {
             try {
-                drawSettingsDropDown(g2d, new Color(0, 71, 255));
+                drawSettingsDropDown(g2d, new Color(70, 121, 255));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            button.drawButton(g2d, new Color(0, 71, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
+            button.drawButton(g2d, new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348, mouseX, mouseY);
             g2d.drawImage(settingsIcon.getImage(), 600, 10, 20, 20, this);
         }
 
@@ -181,11 +192,23 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    public void googleSignIn() throws IOException {
+    public void googleSignIn() {
 
         if (browserOpen) {
 
-            authentication.logon();
+            try {
+                googleDriveFoldersUnapproved = googleDrive.listFolders(authentication.logon(), "");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                authentication.logout();
+            }
+
+            try {
+                authentication.logon();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+
 
             //If authentication successful get rid of login screen
             loginScreen = false;
@@ -221,11 +244,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             if (checkInternetConnection()) {
                 drawConnectionError = false;
                 browserOpen = true;
-                try {
-                    googleSignIn();
-                } catch (IOException exception) {
-                    exception.printStackTrace();
-                }
+                googleSignIn();
             } else {
                 drawConnectionError = true;
             }
@@ -262,14 +281,15 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 playerScreen = false;
                 folderSelectionScreen = true;
 
-                add(unapprovedFileSearchJTextField);
-                add(approvedFileSearchJTextField);
-
                 try {
-                    googleDriveFolders = googleDrive.listFolders(authentication.logon());
+                    googleDriveFoldersUnapproved = googleDrive.listFolders(authentication.logon(), "");
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+
+                add(unapprovedFileSearchJTextField);
+                add(approvedFileSearchJTextField);
+
 
             }
         }

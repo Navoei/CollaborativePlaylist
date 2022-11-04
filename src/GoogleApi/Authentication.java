@@ -24,7 +24,6 @@ import java.util.List;
 public class Authentication {
 
     private static final GetResources resources = new GetResources();
-    private Credential USER_CREDENTIALS;
 
     private static final String APPLICATION_NAME = "InteractivePlaylist";
 
@@ -57,9 +56,8 @@ public class Authentication {
                 .build();
 
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        USER_CREDENTIALS = new AuthorizationCodeInstalledApp(flow, receiver).authorize("InteractivePlaylistClient");
 
-        return USER_CREDENTIALS;
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("InteractivePlaylistClient");
     }
 
     public void logout() {

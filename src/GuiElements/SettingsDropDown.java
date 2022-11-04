@@ -12,7 +12,7 @@ public class SettingsDropDown {
 
     private Font buttonFont;
 
-    public SettingsDropDown() throws FileNotFoundException {
+    public SettingsDropDown() {
         button = new Button();
         settings = new Settings();
 

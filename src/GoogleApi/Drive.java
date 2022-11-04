@@ -1,8 +1,6 @@
 package GoogleApi;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
@@ -17,7 +15,7 @@ public class Drive {
     public Drive() throws GeneralSecurityException, IOException {
     }
 
-    public List<File> listFolders(Credential userCredentials) throws IOException {
+    public List<File> listFolders(Credential userCredentials, String fileName) throws IOException {
         // Build a new authorized API client service.
         com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
                 .setApplicationName(authentication.getApplicationName())
@@ -25,7 +23,7 @@ public class Drive {
 
         // Print the names and IDs for up to 10 files.
         FileList result = service.files().list()
-                .setQ("mimeType = 'application/vnd.google-apps.folder'")
+                .setQ("mimeType = 'application/vnd.google-apps.folder' and name contains '" + fileName + "'")
                 .setPageSize(10)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
