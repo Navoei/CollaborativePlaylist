@@ -79,7 +79,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         approvedFileSearchJTextField.setColumns(16);
 
         unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
-        approvedFileSearchJTextField.setBounds(294, 200, 236,24);
+        approvedFileSearchJTextField.setBounds(364, 200, 236,24);
 
     }
 
@@ -152,7 +152,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         if (!loginScreen) {
             try {
-                drawSettingsDropDown(g2d, new Color(70, 121, 255));
+                drawSettingsDropDown(g2d, new Color(70, 121, 255), 425, 5, 200, 300);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -178,9 +178,9 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     }
 
-    private void drawSettingsDropDown(Graphics g2d, Color color) throws FileNotFoundException {
+    private void drawSettingsDropDown(Graphics g2d, Color color, int menuX, int menuY, int menuW, int menuH) throws FileNotFoundException {
         if (displaySettingsDropDown) {
-            settingsDropDown.drawSettingsDropDown(g2d, color, mouseX, mouseY);
+            settingsDropDown.drawSettingsDropDown(g2d, color, menuX, menuY, menuW, menuH, mouseX, mouseY);
         }
     }
 
@@ -250,15 +250,24 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         }
 
+        if (folderSelectionScreen) {
+            if ( (((e.getX() > 246) && (e.getX() < 270)) && ((e.getY() > 200) && (e.getY() < 224))) ) {
+                //Unapproved Folder Search Button
+                System.out.println("Searching for folders: ");
+            } else if ( (((e.getX() > 600) && (e.getX() < 624)) && ((e.getY() > 200) && (e.getY() < 224))) ) {
+                //Approved Folder Search Button
+                System.out.println("Searching for folders: ");
+            }
+        }
+
         //Open when settings button is pressed. When open close only when clicking button or area outside menu.
         if (!loginScreen && !displaySettingsDropDown && (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35))) ) {
             displaySettingsDropDown = true;
-        } else if ( (((e.getX() < 425) || (e.getX() > 625)) || ((e.getY() < 5) || (e.getY() > 305)))
-                    || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
+        } else if ( !(((e.getX() > settingsDropDown.getX()) && (e.getX() < settingsDropDown.getX()+settingsDropDown.getWidth())) && ((e.getY() > settingsDropDown.getY()) && (e.getY() < settingsDropDown.getY()+settingsDropDown.getHeight())))
+                || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
         ) {
             displaySettingsDropDown = false;
         }
-
 
         if (!loginScreen && displaySettingsDropDown) {
             if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
@@ -269,7 +278,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                     throw new RuntimeException(ex);
                 }
             } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 65) && (e.getY() < 90))) ){
-                //Player Button
+                //Music Player Button
                 playerScreen = true;
                 folderSelectionScreen = false;
 
@@ -292,6 +301,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
 
             }
+
         }
 
     }
