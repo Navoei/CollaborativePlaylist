@@ -36,7 +36,6 @@ public class Drive {
             for (File file : files) {
                 System.out.printf("%s (%s)\n", file.getName(), file.getId());
             }
-            files.addAll(result.getFiles());
         }
         return files;
     }
