@@ -1,7 +1,7 @@
 package Window;
 
 import GoogleApi.Authentication;
-import GoogleApi.Drive;
+import GoogleApi.GoogleDrive;
 import GuiElements.Images;
 import GuiElements.Button;
 import GuiElements.SelectFolderButton;
@@ -31,17 +31,16 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private Color customBlue = new Color(0, 71, 255);
     private ImageIcon logo, settingsIcon;
-    private Button button;
-    private SettingsDropDown settingsDropDown;
     private Settings settings;
 
-    private SelectFolderButton selectFolderButton;
+    private SelectFolderButton selectFolderButtonUnapproved;
+    private SelectFolderButton selectFolderButtonApproved;
     private static final GetResources resources = new GetResources();
     private final Authentication authentication = new Authentication();
 
     private File settingsFile = new File(resources.getFileResource("credentials.json").getPath().replace("credentials.json", "user/UserSettings.txt"));
 
-    private final Drive googleDrive = new Drive();
+    private final GoogleDrive googleDrive = new GoogleDrive();
 
     private int mouseX, mouseY;
 
@@ -49,11 +48,17 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private Font textFont = new Font("Berlin Sans FB", Font.PLAIN, 36);
 
-    private List<com.google.api.services.drive.model.File> googleDriveFoldersUnapproved;
-    private List<com.google.api.services.drive.model.File> googleDriveFoldersApproved;
+    private List<com.google.api.services.drive.model.File> googleDriveFoldersListUnapproved;
+    private List<com.google.api.services.drive.model.File> googleDriveFoldersListApproved;
 
     private JTextField unapprovedFileSearchJTextField;
     private JTextField approvedFileSearchJTextField;
+
+    private Button loginButton = new Button(new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348);
+    private Button unaprovedSearchButton = new Button(new Color(0, 71, 255), 246, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348);
+    private Button aprovedSearchButton = new Button(new Color(0, 71, 255), 600, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348);
+    private Button settingsButton = new Button(new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348);
+    private SettingsDropDown settingsDropDown;
 
     public UserInterface() throws GeneralSecurityException, IOException {
 
@@ -68,10 +73,9 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         displaySettingsDropDown = false;
 
         Images images = new Images();
-        button = new Button();
+
         settings = new Settings();
-        settingsDropDown = new SettingsDropDown();
-        selectFolderButton = new SelectFolderButton();
+        settingsDropDown = new SettingsDropDown(new Color(70, 121, 255), 425, 5, 200, 175, settings.getSettingValue("theme"));
 
         setThemeOnStartup();
 
@@ -129,7 +133,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
             g2d.drawImage(logo.getImage(), (getWidth()/2)-(logo.getIconWidth()/4), 10, logo.getIconWidth()/2, logo.getIconHeight()/2, this);
 
-            button.drawButton(g2d, new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348, mouseX, mouseY);
+            loginButton.drawButton(g2d, mouseX, mouseY);
 
             drawFeedbackText(g2d);
 
@@ -147,29 +151,27 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             g2d.drawString("Folder Selection",175,100);
             g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 10));
 
-            button.drawButton(g2d, new Color(0, 71, 255), 246, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
-            button.drawButton(g2d, new Color(0, 71, 255), 600, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348, mouseX, mouseY);
+            unaprovedSearchButton.drawButton(g2d, mouseX, mouseY);
+            aprovedSearchButton.drawButton(g2d, mouseX, mouseY);
 
-            if (googleDriveFoldersUnapproved != null) {
-                g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 8));
-                g2d.setColor(Color.BLUE);
-                //g2d.drawString(googleDriveFoldersUnapproved.toString(), 100,300);
-                //g2d.drawString(googleDriveFoldersApproved.toString(), 100, 325);
-                //unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
-                //approvedFileSearchJTextField.setBounds(364, 200, 236,24);
+            g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 8));
+            g2d.setColor(Color.BLUE);
+            //g2d.drawString(googleDriveFoldersUnapproved.toString(), 100,300);
+            //g2d.drawString(googleDriveFoldersApproved.toString(), 100, 325);
+            //unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
+            //approvedFileSearchJTextField.setBounds(364, 200, 236,24);
 
-                selectFolderButton.drawSelectFolderButton(g2d, googleDriveFoldersUnapproved, 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 20, 12, 230, mouseX, mouseY, 10, 3);
-
+            selectFolderButtonUnapproved.drawSelectFolderButtons(g2d, googleDriveFoldersListUnapproved, mouseX, mouseY);
+            selectFolderButtonApproved.drawSelectFolderButtons(g2d, googleDriveFoldersListApproved, mouseX, mouseY);
             }
-        }
 
         if (!loginScreen) {
             try {
-                drawSettingsDropDown(g2d, new Color(70, 121, 255), 425, 5, 200, 175);
+                drawSettingsDropDown(g2d, mouseX, mouseY);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            button.drawButton(g2d, new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348, mouseX, mouseY);
+            settingsButton.drawButton(g2d, mouseX, mouseY);
             g2d.drawImage(settingsIcon.getImage(), 600, 10, 20, 20, this);
         }
 
@@ -191,9 +193,9 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     }
 
-    private void drawSettingsDropDown(Graphics g2d, Color color, int menuX, int menuY, int menuW, int menuH) throws FileNotFoundException {
+    private void drawSettingsDropDown(Graphics g2d, int mouseX, int mouseY) throws FileNotFoundException {
         if (displaySettingsDropDown) {
-            settingsDropDown.drawSettingsDropDown(g2d, color, menuX, menuY, menuW, menuH, mouseX, mouseY);
+            settingsDropDown.drawSettingsDropDown(g2d, mouseX, mouseY);
         }
     }
 
@@ -210,8 +212,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (browserOpen) {
 
             try {
-                googleDriveFoldersUnapproved = googleDrive.listFolders(authentication.logon(), "");
-                googleDriveFoldersApproved = googleDrive.listFolders(authentication.logon(), "");
+                googleDriveFoldersListUnapproved = googleDrive.listFolders(authentication.logon(), "");
+                googleDriveFoldersListApproved = googleDrive.listFolders(authentication.logon(), "");
+                selectFolderButtonUnapproved = new SelectFolderButton(googleDriveFoldersListUnapproved, 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 20, 20, 230, mouseX, mouseY, 10, 3);
+                selectFolderButtonApproved = new SelectFolderButton(googleDriveFoldersListApproved, 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 20, 376, 230, mouseX, mouseY, 10, 3);
             } catch (IOException ex) {
                 ex.printStackTrace();
                 authentication.logout();
@@ -241,9 +245,11 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private void setTheme() throws IOException {
         if (settings.getSettingValue("theme").equals("light")) {
             settings.setSetting("theme", "dark");
+            settingsDropDown.setThemeText("dark");
             backgroundColor = new Color(0,0,0);
         } else if (settings.getSettingValue("theme").equals("dark")) {
             settings.setSetting("theme", "light");
+            settingsDropDown.setThemeText("light");
             backgroundColor = new Color(255,255,255);
         }
     }
@@ -254,7 +260,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (e.getButton()!=1) return;
 
         //Login button
-        if ( loginScreen && (((e.getX() > 243) && (e.getX() < 393)) && ((e.getY() > 320) && (e.getY() < 360))) ) {
+        if ( loginScreen && loginButton.isClicked(e.getX(), e.getY()) ) {
             if (checkInternetConnection()) {
                 drawConnectionError = false;
                 browserOpen = true;
@@ -265,43 +271,57 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         }
 
         if (folderSelectionScreen) {
-            if ( (((e.getX() > 246) && (e.getX() < 270)) && ((e.getY() > 200) && (e.getY() < 224))) ) {
+
+            if ( unaprovedSearchButton.isClicked(e.getX(), e.getY()) ) {
                 //Unapproved Folder Search Button
-                System.out.println("Searching for folders: " + unapprovedFileSearchJTextField.getText());
+                //System.out.println("Searching for folders: " + unapprovedFileSearchJTextField.getText());
                 try {
-                    googleDriveFoldersUnapproved = googleDrive.listFolders(authentication.logon(), unapprovedFileSearchJTextField.getText());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else if ( (((e.getX() > 600) && (e.getX() < 624)) && ((e.getY() > 200) && (e.getY() < 224))) ) {
-                //Approved Folder Search Button
-                System.out.println("Searching for folders: " + approvedFileSearchJTextField.getText());
-                try {
-                    googleDriveFoldersApproved = googleDrive.listFolders(authentication.logon(), approvedFileSearchJTextField.getText());
+                    googleDriveFoldersListUnapproved = googleDrive.listFolders(authentication.logon(), unapprovedFileSearchJTextField.getText());
+                    selectFolderButtonUnapproved = new SelectFolderButton(googleDriveFoldersListUnapproved, 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 20, 20, 230, mouseX, mouseY, 10, 3);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }
+            if ( aprovedSearchButton.isClicked(e.getX(), e.getY()) ) {
+                //Approved Folder Search Button
+                //System.out.println("Searching for folders: " + approvedFileSearchJTextField.getText());
+                try {
+                    googleDriveFoldersListApproved = googleDrive.listFolders(authentication.logon(), approvedFileSearchJTextField.getText());
+                    selectFolderButtonApproved = new SelectFolderButton(googleDriveFoldersListApproved, 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 20, 376, 230, mouseX, mouseY, 10, 3);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            //check Folder Click Unapproved Section!
+            if (selectFolderButtonUnapproved.returnButtonClicked(googleDriveFoldersListUnapproved, e.getX(), e.getY()) != null) {
+                System.out.println(selectFolderButtonUnapproved.returnButtonClicked(googleDriveFoldersListUnapproved, e.getX(), e.getY()));
+            }
+            //check Folder Click approved Section!
+            if (selectFolderButtonApproved.returnButtonClicked(googleDriveFoldersListApproved, e.getX(), e.getY()) != null) {
+                System.out.println(selectFolderButtonApproved.returnButtonClicked(googleDriveFoldersListApproved, e.getX(), e.getY()));
+            }
+
         }
 
         //Open when settings button is pressed. When open close only when clicking button or area outside menu.
-        if (!loginScreen && !displaySettingsDropDown && (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35))) ) {
+        if (!loginScreen && !displaySettingsDropDown && settingsButton.isClicked(e.getX(), e.getY()) ) {
             displaySettingsDropDown = true;
         } else if ( !(((e.getX() > settingsDropDown.getX()) && (e.getX() < settingsDropDown.getX()+settingsDropDown.getWidth())) && ((e.getY() > settingsDropDown.getY()) && (e.getY() < settingsDropDown.getY()+settingsDropDown.getHeight())))
-                || (((e.getX() > 595) && (e.getX() < 625)) && ((e.getY() > 5) && (e.getY() < 35)))
+                || settingsButton.isClicked(e.getX(), e.getY())
         ) {
             displaySettingsDropDown = false;
         }
 
         if (!loginScreen && displaySettingsDropDown) {
-            if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 35) && (e.getY() < 60))) ) {
+            if ( settingsDropDown.buttonClicked("Theme", e.getX(), e.getY()) ) {
                 //Theme Button
                 try {
                     setTheme();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-            } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 65) && (e.getY() < 90))) ){
+            } else if ( settingsDropDown.buttonClicked("MusicPlayer", e.getX(), e.getY()) ){
                 //Music Player Button
                 playerScreen = true;
                 folderSelectionScreen = false;
@@ -309,17 +329,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 remove(unapprovedFileSearchJTextField);
                 remove(approvedFileSearchJTextField);
 
-            } else if ( (((e.getX() > 435) && (e.getX() < 585)) && ((e.getY() > 95) && (e.getY() < 120))) ) {
+            } else if ( settingsDropDown.buttonClicked("FolderSelection", e.getX(), e.getY()) ) {
                 //Folder Selection Button
                 playerScreen = false;
                 folderSelectionScreen = true;
-
-                /*try {
-                    googleDriveFoldersUnapproved = googleDrive.listFolders(authentication.logon(), "");
-                    googleDriveFoldersApproved = googleDrive.listFolders(authentication.logon(), "");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }*/
 
                 add(unapprovedFileSearchJTextField);
                 add(approvedFileSearchJTextField);

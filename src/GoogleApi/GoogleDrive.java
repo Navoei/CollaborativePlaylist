@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-public class Drive {
+public class GoogleDrive {
 
     private final Authentication authentication = new Authentication();
 
-    public Drive() throws GeneralSecurityException, IOException {
+    public GoogleDrive() throws GeneralSecurityException, IOException {
     }
 
     public List<File> listFolders(Credential userCredentials, String fileName) throws IOException {
@@ -24,7 +24,7 @@ public class Drive {
         // Print the names and IDs for up to 10 files.
         FileList result = service.files().list()
                 .setQ("mimeType = 'application/vnd.google-apps.folder' and name contains '" + fileName + "'")
-                .setPageSize(10)
+                .setPageSize(9)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
         List<File> files = result.getFiles();
