@@ -46,17 +46,30 @@ public class Button extends JPanel {
             g2d.fillRect(getButtonX(), getButtonY(), getButtonW(), getButtonH());
             g2d.setFont(new Font(buttonTextFont.getName(), buttonTextFont.getStyle(), getButtonTextSize()));
             g2d.setColor(getButtonColor());
-            g2d.drawString(getButtonText(), getButtonTextX(), getButtonTextY());
+            if (getButtonText().length() > 24) {
+                g2d.drawString(getButtonText().substring(0, 24) + "...", getButtonTextX(), getButtonTextY());
+            } else {
+                g2d.drawString(getButtonText(), getButtonTextX(), getButtonTextY());
+            }
+
         } else {
             g2d.setColor(getButtonColor());
             g2d.fillRect(getButtonX(), getButtonY(), getButtonW(), getButtonH());
             g2d.setFont(new Font(buttonTextFont.getName(), buttonTextFont.getStyle(), getButtonTextSize()));
             g2d.setColor(getButtonTextColor());
-            g2d.drawString(getButtonText(), getButtonTextX(), getButtonTextY());
+            if (getButtonText().length() > 24) {
+                g2d.drawString(getButtonText().substring(0, 24) + "...", getButtonTextX(), getButtonTextY());
+            } else {
+                g2d.drawString(getButtonText(), getButtonTextX(), getButtonTextY());
+            }
         }
     }
 
     public boolean isClicked(int mouseXV, int mouseYV) {
+        return ((mouseXV > getButtonX()) && (mouseXV < getButtonX() + getButtonW())) && ((mouseYV > getButtonY()) && (mouseYV < getButtonY() + getButtonH()));
+    }
+
+    public boolean isMouseHovering(int mouseXV, int mouseYV) {
         return ((mouseXV > getButtonX()) && (mouseXV < getButtonX() + getButtonW())) && ((mouseYV > getButtonY()) && (mouseYV < getButtonY() + getButtonH()));
     }
 

@@ -18,7 +18,7 @@ public class SelectFolderButton {
         googleDrive = new GoogleDrive();
     }
 
-    public SelectFolderButton(List<File> files, int x, int y, int w, int h, Color btnColor, Color btnTxtColor, Font btnFont, int btnTxtSize, int btnTxtX, int btnTxtY, int mouseX, int mouseY, int spacing, int offset) {
+    public SelectFolderButton(List<File> files, int x, int y, int w, int h, Color btnColor, Color btnTxtColor, Font btnFont, int btnTxtSize, int btnTxtX, int btnTxtY, int spacing, int offset) {
         if (files == null) return;
         for (int i=0; i < files.size(); i++) {
             fileButtonHashMap.put(files.get(i), new Button(btnColor, x, y+(i*(h+spacing))+spacing, w, h, btnFont, btnTxtColor, files.get(i).getName(), btnTxtSize, btnTxtX, btnTxtY+(i*(h+spacing))+spacing*offset-offset));

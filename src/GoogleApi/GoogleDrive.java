@@ -21,9 +21,9 @@ public class GoogleDrive {
                 .setApplicationName(authentication.getApplicationName())
                 .build();
 
-        // Print the names and IDs for up to 10 files.
+        // Print the names and IDs for up to 9 files.
         FileList result = service.files().list()
-                .setQ("mimeType = 'application/vnd.google-apps.folder' and name contains '" + fileName + "'")
+                .setQ("mimeType = 'application/vnd.google-apps.folder' and name contains '" + fileName + "' and trashed=false")
                 .setPageSize(9)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
@@ -39,4 +39,44 @@ public class GoogleDrive {
         }
         return files;
     }
+
+    public List<File> listMusicFilesInsideFolder(Credential userCredentials, String folderId, String fileName) throws IOException {
+
+        com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
+                .setApplicationName(authentication.getApplicationName())
+                .build();
+
+        FileList result = service.files().list()
+                .setQ("'"+folderId+"' in parents and trashed=false and (name contains '" + fileName + ".wav' or name contains '" + fileName + ".mp3')")
+                .setPageSize(9)
+                .setFields("nextPageToken, files(id, name)")
+                .execute();
+        List<File> files = result.getFiles();
+        if (files == null || files.isEmpty()) {
+            System.out.println("No files found.");
+            return null;
+        } else {
+            System.out.println("Music Files:");
+            for (File file : files) {
+                System.out.printf("%s (%S)\n", file.getName(), file.getId());
+            }
+        }
+        return files;
+    }
+
+    public String getFileNameById(Credential userCredentials, String id) {
+
+        com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
+                .setApplicationName(authentication.getApplicationName())
+                .build();
+
+        try {
+            File file = service.files().get(id).execute();
+            return file.getName();
+        } catch (Exception e) {
+            System.out.println("An Error Occurred!: " + e);
+        }
+        return null;
+    }
+
 }

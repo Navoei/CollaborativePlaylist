@@ -34,6 +34,7 @@ public class SettingsDropDown {
         settingsButtonHashMap.put("Theme", new Button(new Color(113, 149, 255), 435, 35, 150, 25, buttonFont, new Color(255,255,255), "Theme: " + settingsValue, 20, 445, 53));
         settingsButtonHashMap.put("MusicPlayer", new Button(new Color(113, 149, 255), 435, 65, 150, 25, buttonFont, new Color(255,255,255), "Music Player", 20, 445, 83));
         settingsButtonHashMap.put("FolderSelection", new Button(new Color(113, 149, 255), 435, 95, 150, 25, buttonFont, new Color(255,255,255), "Folder Selection", 20, 445, 113));
+        settingsButtonHashMap.put("MusicApproval", new Button(new Color(113, 149, 255), 435, 125, 150, 25, buttonFont, new Color(255,255,255), "Playlist Manager", 20, 445, 143));
     }
 
     public void drawSettingsDropDown(Graphics g2d, int mouseX, int mouseY) {
@@ -45,6 +46,7 @@ public class SettingsDropDown {
         settingsButtonHashMap.get("Theme").drawButton(g2d, mouseX, mouseY);
         settingsButtonHashMap.get("MusicPlayer").drawButton(g2d, mouseX, mouseY);
         settingsButtonHashMap.get("FolderSelection").drawButton(g2d, mouseX, mouseY);
+        settingsButtonHashMap.get("MusicApproval").drawButton(g2d, mouseX, mouseY);
     }
 
     public boolean buttonClicked(String buttonName, int mouseXV, int mouseYV) {
