@@ -42,6 +42,12 @@ public class MusicPlayer {
         playerThread.start();
     }
 
+
+    /*
+    Get the list of music files. Send it to a method where it begins playing the first song. Set it to be skippable and rewindable.
+     */
+
+
     public void pause() {
         playerThread.suspend();
         isPaused = true;
