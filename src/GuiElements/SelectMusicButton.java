@@ -25,7 +25,7 @@ public class SelectMusicButton {
         }
     }
 
-    public void drawSelectMusicButttons(Graphics g2d, List<File> musicFiles, int mouseX, int mouseY) {
+    public void drawSelectMusicButtons(Graphics g2d, List<File> musicFiles, int mouseX, int mouseY) {
         if (musicFiles == null) return;
         for (File musicFile : musicFiles) {
             musicFileButtonHashMap.get(musicFile).drawButton(g2d, mouseX, mouseY);

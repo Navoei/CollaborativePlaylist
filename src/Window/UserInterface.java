@@ -2,12 +2,17 @@ package Window;
 
 import GoogleApi.Authentication;
 import GoogleApi.GoogleDrive;
+import GoogleApi.PlaySoundFile;
 import GuiElements.*;
 import GuiElements.Button;
+import javazoom.jl.decoder.JavaLayerException;
 import resources.GetResources;
 import resources.Settings;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -29,6 +34,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private Color customBlue = new Color(0, 71, 255);
     private ImageIcon logo, settingsIcon;
     private Settings settings;
+    private PlaySoundFile playSoundFile = new PlaySoundFile();
 
     private SelectFolderButton selectFolderButtonUnapproved;
     private SelectFolderButton selectFolderButtonApproved;
@@ -56,9 +62,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private JTextField approvedFileSearchJTextField;
 
     private Button loginButton = new Button(new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348);
-    private Button unapprovedSearchButton = new Button(new Color(0, 71, 255), 246, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348);
-    private Button approvedSearchButton = new Button(new Color(0, 71, 255), 600, 200, 24, 24, textFont, new Color(113, 149, 255), "", 30, 281, 348);
     private Button settingsButton = new Button(new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348);
+    private Button pauseButton = new Button(new Color(0, 71, 255), 295, 460, 40, 40, textFont, new Color(113, 149, 255), "||", 30, 308, 489);
     private SettingsDropDown settingsDropDown;
     private String selectedUnapprovedFolderName;
     private String selectedApprovedFolderName;
@@ -87,15 +92,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         logo = images.loadImage("logo.png");
         settingsIcon = images.loadImage("gear.png");
 
-        unapprovedFileSearchJTextField = new JTextField();
-        unapprovedFileSearchJTextField.setColumns(16);
-
-        approvedFileSearchJTextField = new JTextField();
-        approvedFileSearchJTextField.setColumns(16);
-
-        unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
-        approvedFileSearchJTextField.setBounds(364, 200, 236,24);
-
         if (!settings.getSettingValue("approvedplaylistfolder").equals("null")) {
             selectedUnapprovedFolderName = settings.getSettingValue("unapprovedplaylistfolder");
         }
@@ -103,6 +99,77 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (!settings.getSettingValue("unapprovedplaylistfolder").equals("null")) {
             selectedApprovedFolderName = settings.getSettingValue("approvedplaylistfolder");
         }
+
+        unapprovedFileSearchJTextField = new JTextField();
+        unapprovedFileSearchJTextField.setColumns(16);
+        unapprovedFileSearchJTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void update() {
+                try {
+                    if (folderSelectionScreen) {
+                        googleDriveFoldersListUnapproved = googleDrive.listFolders(authentication.logon(), unapprovedFileSearchJTextField.getText());
+                        selectFolderButtonUnapproved = new SelectFolderButton(googleDriveFoldersListUnapproved, 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3);
+                    }
+                    if (playerlistManagerScreen) {
+                        musicFilesUnapproved = googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("unapprovedplaylistfolder"), unapprovedFileSearchJTextField.getText());
+                        selectMusicButtonUnapproved = new SelectMusicButton(musicFilesUnapproved, 364, 255, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        approvedFileSearchJTextField = new JTextField();
+        approvedFileSearchJTextField.setColumns(16);
+        approvedFileSearchJTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void update() {
+                try {
+                    if (folderSelectionScreen) {
+                        googleDriveFoldersListApproved = googleDrive.listFolders(authentication.logon(), approvedFileSearchJTextField.getText());
+                        selectFolderButtonApproved = new SelectFolderButton(googleDriveFoldersListApproved, 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
+                    }
+                    //if (playerlistManagerScreen) {
+                        //musicFilesApproved = googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("approvedplaylistfolder"), approvedFileSearchJTextField.getText());
+                        //selectMusicButtonApproved = new SelectMusicButton(musicFilesApproved, 364, 255, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
+                    //}
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+
+        unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
+        approvedFileSearchJTextField.setBounds(364, 200, 236,24);
 
     }
 
@@ -157,7 +224,9 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         } else if (playerScreen) {
             g2d.setColor(customBlue);
-            g2d.drawString("PlayerScreen",100,100);
+
+            pauseButton.drawButton(g2d, mouseX, mouseY);
+
         } else if (folderSelectionScreen) {
             g2d.setColor(customBlue);
             g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 48));
@@ -184,10 +253,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 }
             }
 
-
-            unapprovedSearchButton.drawButton(g2d, mouseX, mouseY);
-            approvedSearchButton.drawButton(g2d, mouseX, mouseY);
-
             g2d.setFont(new Font("Berlin Sans FB", Font.PLAIN, 8));
             g2d.setColor(Color.BLUE);
             //g2d.drawString(googleDriveFoldersUnapproved.toString(), 100,300);
@@ -211,11 +276,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 g2d.drawString("Unapproved Music", 10, 190);
                 g2d.drawString("Approved Music", 364, 190);
 
-                unapprovedSearchButton.drawButton(g2d, mouseX, mouseY);
-                approvedSearchButton.drawButton(g2d, mouseX, mouseY);
-
-                selectMusicButtonUnapproved.drawSelectMusicButttons(g2d, musicFilesUnapproved, mouseX, mouseY);
-                selectMusicButtonApproved.drawSelectMusicButttons(g2d, musicFilesApproved, mouseX, mouseY);
+                selectMusicButtonUnapproved.drawSelectMusicButtons(g2d, musicFilesUnapproved, mouseX, mouseY);
+                //selectMusicButtonApproved.drawSelectMusicButtons(g2d, musicFilesApproved, mouseX, mouseY);
             }
         }
 
@@ -324,28 +386,18 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         }
 
-        if (folderSelectionScreen) {
+        if (playerScreen) {
+            if (pauseButton.isClicked(mouseX, mouseY)) {
+                int counter = 0;
+                try {
+                    playSoundFile.playMusic(authentication.logon(), musicFilesApproved.get(0));
+                } catch (UnsupportedAudioFileException | LineUnavailableException | IOException | JavaLayerException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
 
-            if ( unapprovedSearchButton.isClicked(e.getX(), e.getY()) ) {
-                //Unapproved Folder Search Button
-                //System.out.println("Searching for folders: " + unapprovedFileSearchJTextField.getText());
-                try {
-                    googleDriveFoldersListUnapproved = googleDrive.listFolders(authentication.logon(), unapprovedFileSearchJTextField.getText());
-                    selectFolderButtonUnapproved = new SelectFolderButton(googleDriveFoldersListUnapproved, 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-            if ( approvedSearchButton.isClicked(e.getX(), e.getY()) ) {
-                //Approved Folder Search Button
-                //System.out.println("Searching for folders: " + approvedFileSearchJTextField.getText());
-                try {
-                    googleDriveFoldersListApproved = googleDrive.listFolders(authentication.logon(), approvedFileSearchJTextField.getText());
-                    selectFolderButtonApproved = new SelectFolderButton(googleDriveFoldersListApproved, 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
+        if (folderSelectionScreen) {
 
             //check Folder Click Unapproved Section!
             if (selectFolderButtonUnapproved.returnButtonClicked(googleDriveFoldersListUnapproved, e.getX(), e.getY()) != null) {
@@ -369,14 +421,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         }
 
-        if (playerlistManagerScreen) {
-            if (unapprovedSearchButton.isClicked(e.getX(), e.getY())) {
-                System.out.println(unapprovedFileSearchJTextField.getText());
-            }
-            if (approvedSearchButton.isClicked(e.getX(), e.getY())) {
-                System.out.println(approvedFileSearchJTextField.getText());
-            }
-        }
+        //if (playerlistManagerScreen) {
+        //        System.out.println(unapprovedFileSearchJTextField.getText());
+        //        System.out.println(approvedFileSearchJTextField.getText());
+        //}
 
         //Open when settings button is pressed. When open close only when clicking button or area outside menu.
         if (!loginScreen && !displaySettingsDropDown && settingsButton.isClicked(e.getX(), e.getY()) ) {
@@ -437,9 +485,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                     } else {
                         displayNoFolderSelectedError = false;
                     }
-
-                    musicFilesUnapproved = googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("unapprovedplaylistfolder"), "");
-                    musicFilesApproved = googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("approvedplaylistfolder"), "");
 
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);

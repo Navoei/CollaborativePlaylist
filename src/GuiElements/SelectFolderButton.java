@@ -26,13 +26,10 @@ public class SelectFolderButton {
     }
 
     public void drawSelectFolderButtons(Graphics g2d, List<File> files, int mouseX, int mouseY) {
-
         if (files==null) return;
-
         for (File file : files) {
             fileButtonHashMap.get(file).drawButton(g2d, mouseX, mouseY);
         }
-
     }
 
     public File returnButtonClicked(List<File> files, int mouseX, int mouseY) {
