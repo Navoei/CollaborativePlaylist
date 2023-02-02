@@ -53,7 +53,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private List<com.google.api.services.drive.model.File> googleDriveFoldersListUnapproved;
     private List<com.google.api.services.drive.model.File> googleDriveFoldersListApproved;
     private List<com.google.api.services.drive.model.File> musicFilesUnapproved;
-    private List<com.google.api.services.drive.model.File> musicFilesApproved;
+    public List<com.google.api.services.drive.model.File> musicFilesApproved;
 
     private JTextField unapprovedFileSearchJTextField;
     private JTextField approvedFileSearchJTextField;
@@ -61,6 +61,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
     private Button loginButton = new Button(new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348);
     private Button settingsButton = new Button(new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348);
     private Button pauseButton = new Button(new Color(0, 71, 255), 295, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u25b6", 30, 301, 489);
+    private Button skipButton = new Button(new Color(0, 71, 255), 350, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ed", 30, 355, 489);
+    private Button previousButton = new Button(new Color(0, 71, 255), 250, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ee", 30, 253, 489);
     private SettingsDropDown settingsDropDown;
     private String selectedUnapprovedFolderName;
     private String selectedApprovedFolderName;
@@ -221,6 +223,8 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
         } else if (playerScreen) {
             pauseButton.drawButton(g2d, mouseX, mouseY);
+            skipButton.drawButton(g2d, mouseX, mouseY);
+            previousButton.drawButton(g2d, mouseX, mouseY);
 
             if (musicPlayer.musicHasStarted && musicPlayer.getCurrentSong()!=null) {
                 g2d.setColor(customBlue);
@@ -387,25 +391,58 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (playerScreen) {
 
             if (pauseButton.isClicked(mouseX, mouseY)) {
-
-                    if (!musicPlayer.musicHasStarted) {
-                        try {
-                            musicPlayer.playApprovedPlaylist(authentication.logon(), musicFilesApproved);
-                            pauseButton.setButtonText("\u23f8");
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                    } else {
-                        if (musicPlayer.isPaused) {
-                            musicPlayer.resume();
-                            pauseButton.setButtonText("\u23f8");
-                        } else {
-                            musicPlayer.pause();
-                            pauseButton.setButtonText("\u25b6");
-                        }
+                if (!musicPlayer.musicHasStarted) {
+                    try {
+                        musicPlayer.playApprovedPlaylist(authentication.logon(), musicFilesApproved);
+                        pauseButton.setButtonText("\u23f8");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
-
+                } else {
+                    if (musicPlayer.isPaused) {
+                        musicPlayer.resume();
+                        pauseButton.setButtonText("\u23f8");
+                    } else {
+                        musicPlayer.pause();
+                        pauseButton.setButtonText("\u25b6");
+                    }
+                }
             }
+
+            if (skipButton.isClicked(mouseX, mouseY)) {
+                if (!musicPlayer.musicHasStarted) {
+                    try {
+                        musicPlayer.playApprovedPlaylist(authentication.logon(), musicFilesApproved);
+                        pauseButton.setButtonText("\u23f8");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    try {
+                        musicPlayer.skip(authentication.logon(), musicFilesApproved);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
+            if (previousButton.isClicked(mouseX, mouseY)) {
+                if (!musicPlayer.musicHasStarted) {
+                    try {
+                        musicPlayer.playApprovedPlaylist(authentication.logon(), musicFilesApproved);
+                        pauseButton.setButtonText("\u23f8");
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    try {
+                        musicPlayer.previous(authentication.logon(), musicFilesApproved);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+
         }
 
         if (folderSelectionScreen) {
