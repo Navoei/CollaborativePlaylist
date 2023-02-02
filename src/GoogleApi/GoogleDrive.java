@@ -47,7 +47,7 @@ public class GoogleDrive {
                 .build();
 
         FileList result = service.files().list()
-                .setQ("'"+folderId+"' in parents and trashed=false and (name contains '" + fileName + ".wav' or name contains '" + fileName + ".mp3')")
+                .setQ("'"+folderId+"' in parents and (name contains '" + fileName + ".wav' or name contains '" + fileName + ".mp3') and trashed=false")
                 .setPageSize(9)
                 .setFields("nextPageToken, files(id, name)")
                 .execute();
