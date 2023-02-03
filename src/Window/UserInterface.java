@@ -9,7 +9,13 @@ import javazoom.jl.player.Player;
 import resources.GetResources;
 import resources.Settings;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.Port;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -61,12 +67,13 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
     private JTextField unapprovedFileSearchJTextField;
     private JTextField approvedFileSearchJTextField;
+    private JSlider volumeSlider;
 
     private Button loginButton = new Button(new Color(0, 71, 255), 243, 320, 150, 40, textFont, new Color(113, 149, 255), "Login", 30, 281, 348);
     private Button settingsButton = new Button(new Color(70, 121, 255), 595, 5, 30, 30, new Font("Berlin Sans FB", Font.PLAIN, 20), new Color(115, 153, 255), "", 30, 281, 348);
-    private Button pauseButton = new Button(new Color(0, 71, 255), 295, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u25b6", 30, 301, 489);
-    private Button skipButton = new Button(new Color(0, 71, 255), 350, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ed", 30, 355, 489);
-    private Button previousButton = new Button(new Color(0, 71, 255), 250, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ee", 30, 253, 489);
+    private Button pauseButton = new Button(new Color(0, 71, 255), 299, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u25b6", 30, 306, 489);
+    private Button skipButton = new Button(new Color(0, 71, 255), 347, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ed", 30, 354, 489);
+    private Button previousButton = new Button(new Color(0, 71, 255), 251, 460, 40, 40, new Font("Apple Color Emoji", Font.PLAIN, 36), new Color(113, 149, 255), "\u23ee", 30, 258, 489);
     private SettingsDropDown settingsDropDown;
     private String selectedUnapprovedFolderName;
     private String selectedApprovedFolderName;
@@ -184,6 +191,16 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         unapprovedFileSearchJTextField.setBounds(10, 200, 236,24);
         approvedFileSearchJTextField.setBounds(364, 200, 236,24);
 
+        volumeSlider = new JSlider();
+        volumeSlider.setOrientation(SwingConstants.HORIZONTAL);
+        volumeSlider.setMinimum(0);
+        volumeSlider.setMaximum(100);
+        volumeSlider.setValue(50);
+        volumeSlider.setBounds(193, 625, 250,40);
+        volumeSlider.addChangeListener(e -> {
+            System.out.println(volumeSlider.getValue());
+        });
+
     }
 
     public void run() {
@@ -259,7 +276,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
             if (musicHasStarted && nowPlaying!=null) {
                 g2d.setColor(customBlue);
-                g2d.drawString(nowPlaying.getName(), 100, 100);
+                String currentSongName = nowPlaying.getName();
+                int stringWidth = g2d.getFontMetrics().stringWidth(currentSongName);
+                int stringX = (getWidth() - stringWidth) / 2;
+                g2d.drawString(nowPlaying.getName(), stringX, 400);
             }
 
         } else if (folderSelectionScreen) {
@@ -371,6 +391,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             loginScreen = false;
             browserOpen = false;
             playerScreen = true;
+            add(volumeSlider, BorderLayout.NORTH);
 
             //Set folder and music lists.
             googleDriveFoldersListUnapproved = googleDrive.listFolders(authentication.logon(), "");
@@ -477,13 +498,17 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 if (!musicHasStarted) {
                     playPlaylist();
                     pauseButton.setButtonText("\u23f8");
+                    pauseButton.setButtonTextX(303);
                 } else {
                     if (isPaused) {
                         resumePlayer();
                         pauseButton.setButtonText("\u23f8");
+                        pauseButton.setButtonTextX(303);
+
                     } else {
                         pausePlayer();
                         pauseButton.setButtonText("\u25b6");
+                        pauseButton.setButtonTextX(306);
                     }
                 }
             }
@@ -586,8 +611,10 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
                 remove(unapprovedFileSearchJTextField);
                 remove(approvedFileSearchJTextField);
+                add(volumeSlider, BorderLayout.NORTH);
 
             } else if ( settingsDropDown.buttonClicked("FolderSelection", e.getX(), e.getY()) ) {
+                remove(volumeSlider);
                 //Folder Selection Button
                 playerScreen = false;
                 playlistManagerScreen = false;
@@ -603,6 +630,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 add(unapprovedFileSearchJTextField);
                 add(approvedFileSearchJTextField);
             } else if (settingsDropDown.buttonClicked("MusicApproval", e.getX(), e.getY())) {
+                remove(volumeSlider);
                 playerScreen = false;
                 playlistManagerScreen = true;
                 folderSelectionScreen = false;

@@ -109,6 +109,10 @@ public class Button extends JPanel {
         return mouseYV;
     }
 
+    public void setButtonTextX(int newButtonTextX) {
+        buttonTextX = newButtonTextX;
+    }
+
     public Color getButtonColor() {
         return buttonColor;
     }
