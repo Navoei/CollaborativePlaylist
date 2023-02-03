@@ -495,6 +495,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         if (playerScreen) {
 
             if (pauseButton.isClicked(mouseX, mouseY)) {
+                if (musicFilesApproved==null) return;
                 if (!musicHasStarted) {
                     playPlaylist();
                     pauseButton.setButtonText("\u23f8");
@@ -514,6 +515,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
 
             if (skipButton.isClicked(mouseX, mouseY)) {
+                if (musicFilesApproved==null) return;
                 if (!musicHasStarted) {
                     playPlaylist();
                     pauseButton.setButtonText("\u23f8");
@@ -523,6 +525,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             }
 
             if (previousButton.isClicked(mouseX, mouseY)) {
+                if (musicFilesApproved==null) return;
                 if (!musicHasStarted) {
                     playPlaylist();
                     pauseButton.setButtonText("\u23f8");
