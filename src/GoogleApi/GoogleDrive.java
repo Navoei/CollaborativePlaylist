@@ -1,6 +1,7 @@
 package GoogleApi;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
@@ -16,6 +17,7 @@ public class GoogleDrive {
     }
 
     public List<File> listFolders(Credential userCredentials, String fileName) throws IOException {
+
         // Build a new authorized API client service.
         com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
                 .setApplicationName(authentication.getApplicationName())
@@ -77,6 +79,37 @@ public class GoogleDrive {
             System.out.println("An Error Occurred!: " + e);
         }
         return null;
+    }
+
+    public void moveFileToAnotherFolder(Credential userCredentials, String fileId, String folderId) throws IOException {
+        com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
+                .setApplicationName(authentication.getApplicationName())
+                .build();
+
+        // Retrieve the existing parents to remove
+        File file = service.files().get(fileId)
+                .setFields("parents")
+                .execute();
+        StringBuilder previousParents = new StringBuilder();
+        for (String parent : file.getParents()) {
+            previousParents.append(parent);
+            previousParents.append(',');
+        }
+        try {
+            // Move the file to the new folder
+            file = service.files().update(fileId, null)
+                    .setAddParents(folderId)
+                    .setRemoveParents(previousParents.toString())
+                    .setFields("id, parents")
+                    .execute();
+
+        } catch (GoogleJsonResponseException e) {
+            // TODO(developer) - handle error appropriately
+            System.err.println("Unable to move file: " + e.getDetails());
+            throw e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

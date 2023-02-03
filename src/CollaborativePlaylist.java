@@ -7,7 +7,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-public class InteractivePlaylist extends JFrame {
+public class CollaborativePlaylist extends JFrame {
 
     private static final int WIDTH = 650;
     private static final int HEIGHT = 700;
@@ -16,7 +16,7 @@ public class InteractivePlaylist extends JFrame {
 
     private Settings settings = new Settings();
 
-    public InteractivePlaylist() throws GeneralSecurityException, IOException {
+    public CollaborativePlaylist() throws GeneralSecurityException, IOException {
         super("Collaborative Playlist");
 
         setSize(WIDTH, HEIGHT);
@@ -51,6 +51,6 @@ public class InteractivePlaylist extends JFrame {
     }
 
     public static void main(String[] args) throws GeneralSecurityException, IOException {
-        InteractivePlaylist run = new InteractivePlaylist();
+        CollaborativePlaylist run = new CollaborativePlaylist();
     }
 }

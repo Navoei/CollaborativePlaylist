@@ -25,7 +25,7 @@ public class Authentication {
 
     private static final GetResources resources = new GetResources();
 
-    private static final String APPLICATION_NAME = "InteractivePlaylist";
+    private static final String APPLICATION_NAME = "CollaborativePlaylist";
 
     private static final String TOKENS_DIRECTORY_PATH = resources.getFileResource("credentials.json").getPath().replace("credentials.json", "user");
     private static final String CREDENTIALS_FILE_PATH = resources.getFileResource("credentials.json").getFile().replaceFirst("/", "");
