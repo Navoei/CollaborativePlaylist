@@ -12,11 +12,6 @@ import java.util.List;
 
 public class SelectFolderButton {
     HashMap<File, Button> fileButtonHashMap = new HashMap<>();
-    GoogleDrive googleDrive;
-
-    public SelectFolderButton() throws GeneralSecurityException, IOException {
-        googleDrive = new GoogleDrive();
-    }
 
     public SelectFolderButton(List<File> files, int x, int y, int w, int h, Color btnColor, Color btnTxtColor, Font btnFont, int btnTxtSize, int btnTxtX, int btnTxtY, int spacing, int offset) {
         if (files == null) return;

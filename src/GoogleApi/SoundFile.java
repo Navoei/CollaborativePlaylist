@@ -14,7 +14,7 @@ public class SoundFile {
     public SoundFile() throws GeneralSecurityException, IOException {
     }
 
-    public InputStream getAudioInputStream(Credential userCredentials, File musicFile) throws IOException {
+    public InputStream getMusicInputStream(Credential userCredentials, File musicFile) throws IOException {
         com.google.api.services.drive.Drive service = new com.google.api.services.drive.Drive.Builder(authentication.HTTP_TRANSPORT, authentication.getJsonFactory(), userCredentials)
                 .setApplicationName(authentication.getApplicationName())
                 .build();

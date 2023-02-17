@@ -17,14 +17,6 @@ public class SettingsDropDown {
     private int y;
     private Color menuBackgroundColor;
 
-    public SettingsDropDown() {
-        settings = new Settings();
-        width = 0;
-        height = 0;
-        x = 0;
-        y = 0;
-    }
-
     public SettingsDropDown(Color menuBackgroundColor, int x, int y, int w, int h, String settingsValue) {
         this.x = x;
         this.y = y;

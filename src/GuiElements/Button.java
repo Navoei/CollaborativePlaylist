@@ -10,22 +10,6 @@ public class Button extends JPanel {
     public Font buttonTextFont;
     public String buttonText;
 
-    public Button() {
-        buttonX = 0;
-        buttonY = 0;
-        buttonW = 0;
-        buttonH = 0;
-        buttonTextSize = 0;
-        buttonTextX = 0;
-        buttonTextY = 0;
-        mouseXV = 0;
-        mouseYV = 0;
-        buttonColor = Color.BLUE;
-        buttonTextColor = Color.WHITE;
-        buttonTextFont = new Font("Impact", Font.BOLD, 10);
-        buttonText = "Default Text";
-    }
-
     public Button(Color btnColor, int btnX, int btnY, int btnW, int btnH, Font buttonTextFont, Color btnTextColor, String btnText, int btnTextSize, int btnTextX, int btnTextY) {
         buttonColor = btnColor;
         buttonTextColor = btnTextColor;
