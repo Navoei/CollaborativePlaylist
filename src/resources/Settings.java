@@ -11,8 +11,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Settings {
-    GetResources resources = new GetResources();;
-    private final File settingsFile = new File(resources.getFileResource("credentials.json").getPath().replace("credentials.json", "user/UserSettings.txt"));
+    GetResources resources = new GetResources();
+    private final File settingsFile = new File("user/UserSettings.txt");
+
+    public Settings() throws IOException {
+        if (!(settingsFile.exists())) {
+            settingsFile.getParentFile().mkdirs();
+            settingsFile.createNewFile();
+            copyInputStreamToFile(resources.getFileResourceStream("UserSettings.txt"), settingsFile);
+        }
+    }
 
     public String getSettingValue(String setting) throws FileNotFoundException {
         ArrayList<String> settings = new ArrayList<>();
@@ -58,6 +66,16 @@ public class Settings {
         } else {
             return null;
         }
+    }
+
+    public static void copyInputStreamToFile(InputStream input, File file) {
+
+        try (OutputStream output = new FileOutputStream(file)) {
+            input.transferTo(output);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
     }
 
 }

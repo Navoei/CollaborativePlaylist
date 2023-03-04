@@ -209,7 +209,6 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    //public void paint(Graphics g) {
     public void paintComponent(Graphics g) {
         Graphics2D twoDgraph = (Graphics2D) g;
         if (back == null) {
@@ -354,25 +353,12 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
             try {
                 filesManager.setUnapprovedFoldersList(googleDrive.listFolders(authentication.logon(), ""));
-                filesManager.setApprovedFoldersList(googleDrive.listFolders(authentication.logon(), ""));
-                selectFolderButtonUnapproved = new SelectFolderButton(filesManager.getUnapprovedFoldersList(), 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3);
-                selectFolderButtonApproved = new SelectFolderButton(filesManager.getApprovedFoldersList(), 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
-
-                filesManager.setUnapprovedMusicList(googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("unapprovedplaylistfolder"), ""));
-                filesManager.setApprovedMusicList(googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("approvedplaylistfolder"), ""));
-                selectMusicButtonUnapproved = new SelectMusicButton(filesManager.getUnapprovedMusicList(), 10, 225, 206, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3, new Color(0, 217, 0), new Color(0, 162, 0), 30, 30, "\u2714", "\uD83D\uDDD1", new Color(149, 149, 149), new Color(84, 84, 84));
-                selectMusicButtonApproved = new SelectMusicButton(filesManager.getApprovedMusicList(), 364, 225, 206, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3, new Color(255, 40, 40), new Color(154, 0, 0), 30, 30, "\u274c", "\uD83D\uDDD1", new Color(149, 149, 149), new Color(84, 84, 84));
             } catch (IOException e) {
                 e.printStackTrace();
                 authentication.logout();
+                authentication.logon();
             }
 
-            try {
-                authentication.logon();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //If authentication successful get rid of login screen
             loginScreen = false;
             browserOpen = false;
             playerScreen = true;
@@ -404,6 +390,17 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
                 browserOpen = true;
                 try {
                     googleSignIn();
+
+                    filesManager.setUnapprovedFoldersList(googleDrive.listFolders(authentication.logon(), ""));
+                    filesManager.setApprovedFoldersList(googleDrive.listFolders(authentication.logon(), ""));
+                    selectFolderButtonUnapproved = new SelectFolderButton(filesManager.getUnapprovedFoldersList(), 10, 225, 236, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3);
+                    selectFolderButtonApproved = new SelectFolderButton(filesManager.getApprovedFoldersList(), 364, 225, 236, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3);
+
+                    filesManager.setUnapprovedMusicList(googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("unapprovedplaylistfolder"), ""));
+                    filesManager.setApprovedMusicList(googleDrive.listMusicFilesInsideFolder(authentication.logon(), settings.getSettingValue("approvedplaylistfolder"), ""));
+                    selectMusicButtonUnapproved = new SelectMusicButton(filesManager.getUnapprovedMusicList(), 10, 225, 206, 30, customBlue, new Color(113, 149, 255), textFont, 16, 20, 230, 10, 3, new Color(0, 217, 0), new Color(0, 162, 0), 30, 30, "\u2714", "\uD83D\uDDD1", new Color(149, 149, 149), new Color(84, 84, 84));
+                    selectMusicButtonApproved = new SelectMusicButton(filesManager.getApprovedMusicList(), 364, 225, 206, 30, customBlue, new Color(133, 149, 255), textFont, 16, 376, 230, 10, 3, new Color(255, 40, 40), new Color(154, 0, 0), 30, 30, "\u274c", "\uD83D\uDDD1", new Color(149, 149, 149), new Color(84, 84, 84));
+
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -417,6 +414,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
             if (pauseButton.isClicked(mouseX, mouseY)) {
                 if (filesManager.getApprovedMusicList()==null) return;
                 if (!player.hasMusicStarted()) {
+                    player.resumePlayer();
                     player.playPlaylist();
                     pauseButton.setButtonText("\u23f8");
                     pauseButton.setButtonTextX(303);
@@ -488,7 +486,7 @@ public class UserInterface extends JPanel implements Runnable, MouseListener, Mo
 
         }
 
-        if (playlistManagerScreen) {
+        if (playlistManagerScreen && selectMusicButtonApproved!=null && selectMusicButtonUnapproved!=null) {
             if (selectMusicButtonUnapproved.returnMoveFileButtonClicked(filesManager.getUnapprovedMusicList(), mouseX, mouseY) != null) {
                 listFilesThread = new Thread(() -> {
                     try {

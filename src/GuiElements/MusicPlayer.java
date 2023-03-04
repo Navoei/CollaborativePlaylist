@@ -35,10 +35,28 @@ public class MusicPlayer {
         currentTrackIndex = 0;
     }
 
+    public void playFile(File file) throws JavaLayerException {
+        if (playSongPreviewThread != null) {
+            playSongPreviewThread.stop();
+        }
+        //Lambda functions improve readability and require less lines.
+        playSongPreviewThread = new Thread(() -> {
+            try {
+                player = new Player(soundFile.getMusicInputStream(authentication.logon(), file));
+                while (!player.isComplete()) {
+                    player.play();
+                }
+            } catch (JavaLayerException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        playSongPreviewThread.start();
+    }
+
     public void playPlaylist() {
 
         if (playSongPreviewThread!=null) {
-            playSongPreviewThread.stop();
+            playSongPreviewThread.suspend();
         }
 
         musicHasStarted = true;
@@ -63,25 +81,6 @@ public class MusicPlayer {
         playerThread.start();
     }
 
-    public void playFile(File file) throws JavaLayerException {
-
-        if (playSongPreviewThread != null) {
-            playSongPreviewThread.stop();
-        }
-
-        playSongPreviewThread = new Thread(() -> {
-            try {
-                player = new Player(soundFile.getMusicInputStream(authentication.logon(), file));
-                while (!player.isComplete()) {
-                    player.play();
-                }
-            } catch (JavaLayerException | IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-        playSongPreviewThread.start();
-    }
-
     public void pausePlayer() {
         isPaused = true;
         if (playerThread==null) return;
@@ -94,7 +93,9 @@ public class MusicPlayer {
             playSongPreviewThread.stop();
         }
 
-        playerThread.resume();
+        if (playerThread!=null) {
+            playerThread.resume();
+        }
         isPaused = false;
     }
 

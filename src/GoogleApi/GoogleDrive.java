@@ -86,7 +86,6 @@ public class GoogleDrive {
                 .setApplicationName(authentication.getApplicationName())
                 .build();
 
-        // Retrieve the existing parents to remove
         File file = service.files().get(fileId)
                 .setFields("parents")
                 .execute();
@@ -96,7 +95,6 @@ public class GoogleDrive {
             previousParents.append(',');
         }
         try {
-            // Move the file to the new folder
             file = service.files().update(fileId, null)
                     .setAddParents(folderId)
                     .setRemoveParents(previousParents.toString())
@@ -104,7 +102,6 @@ public class GoogleDrive {
                     .execute();
 
         } catch (GoogleJsonResponseException e) {
-            // TODO(developer) - handle error appropriately
             System.err.println("Unable to move file: " + e.getDetails());
             throw e;
         } catch (IOException e) {

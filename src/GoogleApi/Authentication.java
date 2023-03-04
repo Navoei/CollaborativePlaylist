@@ -27,8 +27,8 @@ public class Authentication {
 
     private static final String APPLICATION_NAME = "CollaborativePlaylist";
 
-    private static final String TOKENS_DIRECTORY_PATH = resources.getFileResource("credentials.json").getPath().replace("credentials.json", "user");
-    private static final String CREDENTIALS_FILE_PATH = resources.getFileResource("credentials.json").getFile().replaceFirst("/", "");
+    private static final String TOKENS_DIRECTORY_PATH = "user/";
+    private static final String CREDENTIALS_FILE_PATH = resources.getFileResourceURL("credentials.json").getFile().replaceFirst("/", "");
 
     private static final List<String> SCOPES =
             Collections.singletonList(DriveScopes.DRIVE);
@@ -61,7 +61,7 @@ public class Authentication {
     }
 
     public void logout() {
-        java.io.File file = new java.io.File(TOKENS_DIRECTORY_PATH + "/StoredCredential");
+        java.io.File file = new java.io.File(TOKENS_DIRECTORY_PATH + "StoredCredential");
         if (file.exists()) {
             file.delete();
         }

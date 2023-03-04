@@ -4,7 +4,7 @@ import resources.Settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.security.GeneralSecurityException;
 
 public class CollaborativePlaylist extends JFrame {
@@ -45,7 +45,7 @@ public class CollaborativePlaylist extends JFrame {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Image icon = Toolkit.getDefaultToolkit().getImage(resources.getFileResource("icon.png"));
+        Image icon = Toolkit.getDefaultToolkit().getImage(resources.getFileResourceURL("icon.png"));
         setIconImage(icon);
 
     }
